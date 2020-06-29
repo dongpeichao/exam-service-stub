@@ -1,28 +1,30 @@
-package paper
+package exam
 
 import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
     description '''
-Represents creating a new paper
+Represents creating a new examination
 
 given:
-    Some valid blank quizzes
+    Valid paper info  and Some blank quizzes
 when:
-    a teacher assemble a new paper
+    a teacher assemble a new examination
 then:
-    thi teacher should get a valid paperId
+    this teacher should get a valid examinationId
 '''
 
     request {
-        url "/papers"
+        url "/examinations"
         method POST()
         headers {
             contentType applicationJson()
         }
         body(
                 teacherId: '8jk4l-k0d9ie7-4jk89l-t88ijj6-h8i9040',
-                blankQuizzes: [
+                paperId: '8jk4l-k0d9ie7-4jk89l-t88irr7-h8i9040',
+                duration: 120,
+                quizzes: [
                         [
                                 id   : '8jk4l-k0d9ie7-4jk89l-t88ijj6-h8ijsl1',
                                 score: 5
@@ -52,9 +54,11 @@ then:
         )
         bodyMatchers {
             jsonPath('$.teacherId', byRegex('[a-zA-Z-0-9]{36}'))
-            jsonPath('$.blankQuizzes', byType {minOccurrence(0)})
-            jsonPath("\$.['blankQuizzes'].['id']", byRegex('[a-zA-Z-0-9]{36}'))
-            jsonPath("\$.['blankQuizzes'].['score']", byRegex('100|[1-9][0-9]|[1-9]'))
+            jsonPath('$.paperId', byRegex('[a-zA-Z-0-9]{36}'))
+            jsonPath('$.duration', byRegex('.{1,1000}'))
+            jsonPath('$.quizzes', byType {minOccurrence(0)})
+            jsonPath("\$.['quizzes'].['id']", byRegex('[a-zA-Z-0-9]{36}'))
+            jsonPath("\$.['quizzes'].['score']", byRegex('100|[1-9][0-9]|[1-9]'))
         }
     }
 
@@ -64,7 +68,7 @@ then:
             contentType applicationJson()
         }
         body(
-                paperId: $(producer(regex('[a-zA-Z-0-9]{36}')), consumer('8jk4l-k0d9ie7-4jk89l-t88ijj6-h8ijsl4'))
+                examinationId: $(producer(regex('[a-zA-Z-0-9]{36}')), consumer('8jk4l-k0d9ie7-4jk89l-t88ijj6-h8ijsl4'))
         )
     }
 }
